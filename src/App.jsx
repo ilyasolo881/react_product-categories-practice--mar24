@@ -27,15 +27,32 @@ const products = productsFromServer.map(product => {
 
 export const App = () => {
   const [selectedUser, setSelectedUser] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleUserChange = user => {
     setSelectedUser(user);
   };
 
+  const handleSearchChange = event => {
+    setSearchQuery(event.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
   const filteredProducts =
     selectedUser === 'All'
-      ? products
-      : products.filter(product => product.owner === selectedUser);
+      ? products.filter(product =>
+          product.name.toLowerCase().includes(searchQuery.trim().toLowerCase()),
+        )
+      : products.filter(
+          product =>
+            product.owner === selectedUser &&
+            product.name
+              .toLowerCase()
+              .includes(searchQuery.trim().toLowerCase()),
+        );
 
   return (
     <div className="section">
@@ -76,7 +93,8 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                 />
 
                 <span className="icon is-left">
@@ -85,11 +103,14 @@ export const App = () => {
 
                 <span className="icon is-right">
                   {/* eslint-disable-next-line jsx-a11y/control-has-associated-label */}
-                  <button
-                    data-cy="ClearButton"
-                    type="button"
-                    className="delete"
-                  />
+                  {searchQuery && (
+                    <button
+                      data-cy="ClearButton"
+                      type="button"
+                      className="delete"
+                      onClick={clearSearch}
+                    />
+                  )}
                 </span>
               </p>
             </div>
@@ -140,9 +161,11 @@ export const App = () => {
         </div>
 
         <div className="box table-container">
-          <p data-cy="NoMatchingMessage">
-            No products matching selected criteria
-          </p>
+          {filteredProducts.length === 0 && selectedUser !== 'All' && (
+            <p data-cy="NoMatchingMessage">
+              No products matching selected criteria
+            </p>
+          )}
           {filteredProducts.length > 0 && (
             <table
               data-cy="ProductTable"
