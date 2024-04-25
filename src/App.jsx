@@ -37,7 +37,8 @@ export const App = () => {
     setSearchQuery(event.target.value);
   };
 
-  const clearSearch = () => {
+  const clearFilters = () => {
+    setSelectedUser('All');
     setSearchQuery('');
   };
 
@@ -108,7 +109,7 @@ export const App = () => {
                       data-cy="ClearButton"
                       type="button"
                       className="delete"
-                      onClick={clearSearch}
+                      onClick={() => setSearchQuery('')}
                     />
                   )}
                 </span>
@@ -153,6 +154,7 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={clearFilters}
               >
                 Reset all filters
               </a>
@@ -161,7 +163,7 @@ export const App = () => {
         </div>
 
         <div className="box table-container">
-          {filteredProducts.length === 0 && selectedUser !== 'All' && (
+          {filteredProducts.length === 0 && (
             <p data-cy="NoMatchingMessage">
               No products matching selected criteria
             </p>
